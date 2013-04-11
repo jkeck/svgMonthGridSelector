@@ -5,7 +5,7 @@
  *
  * This plugin is explicitly designed for use with the SVG ouput by the dates2svg RubyGem ( https://github.com/jkeck/dates2svg )
  *
- * VERSION 0.0.1
+ * VERSION 0.0.1.beta1
  *
 **/
 (function( $ ){
