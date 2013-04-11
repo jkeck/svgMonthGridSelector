@@ -12,7 +12,7 @@
 	$.fn.svgMonthGridSelector = function(options){
 		var settings = $.extend({
 			'begin_input' : '.begin-date',
-			'end_input  ' : '.end-date',
+			'end_input'   : '.end-date',
 			'hits'				: '.hits'
 		}, options);
 
