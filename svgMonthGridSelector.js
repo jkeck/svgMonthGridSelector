@@ -5,13 +5,22 @@
  *
  * This plugin is explicitly designed for use with the SVG ouput by the dates2svg RubyGem ( https://github.com/jkeck/dates2svg )
  *
- * VERSION 0.0.1.beta1
+ * VERSION 0.0.1
  *
 **/
 (function( $ ){
 	$.fn.svgMonthGridSelector = function(options){
+		var settings = $.extend({
+			'begin_input' : '.begin-date',
+			'end_input  ' : '.end-date',
+			'hits'				: '.hits'
+		}, options);
+
 		var selector = this;
 		var svg = $("svg", selector);
+    var begin_input = $("form input" + settings.begin_input, selector);
+		var end_input = $("form input" + settings.end_input, selector);
+		var hits_element = $(settings.hits, selector);
 		
 		updateRangesFromInputs();
 		updateRangeOnFormChange();
@@ -60,38 +69,34 @@
 	      $("rect", svg).each(function(){
 	        $(this).attr("data-selected", "false");
 	      });
-				$("form input.begin-date", selector).attr("value", "");
-				$(".date-range-selector form input.end-date", selector).attr("value", "");
-				$("form #hits", selector).text("");
+				begin_input.attr("value", "");
+				$(".date-range-selector form input" + settings.end_input, selector).attr("value", "");
+				$(settings.hits, selector).text("");
 	    }
 	  }
 
 	  function updateDateSelectorFormControls(){
-		  var begin = $("form input.begin-date", selector);
-		  var end   = $("form input.end-date", selector);
 		  var begin_element = $("rect[data-selected='true']", svg).first();
 		  var end_element = $("rect[data-selected='true']", svg).last();
 		  if(begin_element.length > 0){
-	      begin.attr("value", begin_element.attr("data-year") + "-" + begin_element.attr("data-month"));
+	      begin_input.attr("value", begin_element.attr("data-year") + "-" + begin_element.attr("data-month"));
 		  }
 		  if($("rect[data-selected='true']", svg).length == 1){
-			  end.attr("value", begin_element.attr("data-year") + "-" + begin_element.attr("data-month"));
+			  end_input.attr("value", begin_element.attr("data-year") + "-" + begin_element.attr("data-month"));
 			}else if($("rect[data-selected='true']", svg).length > 1){
-			  end.attr("value", end_element.attr("data-year") + "-" + end_element.attr("data-month"));
+			  end_input.attr("value", end_element.attr("data-year") + "-" + end_element.attr("data-month"));
 		  }else if($("rect[data-selected='true']", svg).length == 0){
-			  begin.attr("value", "");
-			  end.attr("value", "")
+			  begin_input.attr("value", "");
+			  end_input.attr("value", "")
 		  }
 			var hits = 0;
 			$("rect[data-selected='true']", svg).each(function(){
 				hits += parseInt($(this).attr("data-hits"));
 			});
-			$("#hits", selector).text(hits > 0 ? hits : "");
+			$(settings.hits, selector).text(hits > 0 ? hits : "");
 	  }
 
 	  function updateRangeOnFormChange(){
-		  var begin_input = $("form input.begin-date", selector);
-		  var end_input = $("form input.end-date", selector);
 		  $.each([begin_input, end_input], function(){
 			  $(this).change(function(){
 				  if($(this).attr("value") != "" &&
@@ -107,17 +112,15 @@
 	  }
 
 	  function updateRangesFromInputs(){
-			var begin_input = $("form input.begin-date", selector);
-		  var end_input = $("form input.end-date", selector);
 		  var begin_grid_element, end_grid_element;
-			if(begin_input.attr("value") != "") {
+			if(begin_input.length > 0 && begin_input.attr("value") != "") {
 				var match = begin_input.attr("value").match(/^(\d{4})-(\d{2})/)
 				var year = match[1]
 				var month = match[2]
 				begin_grid_element = $("rect[data-year='" + year + "'][data-month='" + month +"']", svg);
 				begin_grid_element.attr("data-selected", "true");
 			}
-			if(end_input.attr("value") != "") {
+			if(end_input.length > 0 && end_input.attr("value") != "") {
 				var match = end_input.attr("value").match(/^(\d{4})-(\d{2})/)
 				var year = match[1]
 				var month = match[2]
